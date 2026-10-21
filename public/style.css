@@ -1,0 +1,258 @@
+/* Base styles: design tokens + standard HTML elements. */
+@layer base {
+	:root {
+		/* Color palette (pastel on dark) */
+		--color-background: #171826;
+		--color-surface: #1f2133;
+		--color-text: #e7e8f0;
+		--color-text-muted: #9aa0b5;
+
+		--color-primary: #818cf8; /* indigo */
+		--color-secondary: #7dd3fc; /* light blue */
+		--color-success: #6ee7b7; /* green */
+		--color-warning: #fde047; /* yellow */
+		--color-error: #fca5a5; /* red */
+
+		/* Typography */
+		--font-family: 'Noto Sans', Helvetica, sans-serif;
+		--font-size-base: 16px;
+	}
+
+	body {
+		margin: 0;
+		padding: 2rem;
+		background-color: var(--color-background);
+		color: var(--color-text);
+		font-family: var(--font-family);
+		font-size: var(--font-size-base);
+		line-height: 1.6;
+	}
+
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6 {
+		line-height: 1.25;
+		margin: 0 0 0.5em;
+	}
+
+	h1 {
+		font-size: 2rem;
+	}
+	h2 {
+		font-size: 1.6rem;
+	}
+	h3 {
+		font-size: 1.35rem;
+	}
+	h4 {
+		font-size: 1.15rem;
+	}
+
+	p {
+		margin: 0 0 1em;
+	}
+
+	a {
+		color: var(--color-secondary);
+		text-decoration: none;
+	}
+
+	a:hover {
+		text-decoration: underline;
+	}
+
+	/* Buttons and button-like links */
+	button,
+	.button,
+	input[type='submit'],
+	input[type='button'] {
+		display: inline-block;
+		padding: 0.5em 1em;
+		border: 1px solid transparent;
+		border-radius: 6px;
+		background-color: var(--color-primary);
+		color: var(--color-background);
+		font-family: inherit;
+		font-size: 1em;
+		cursor: pointer;
+		transition: filter 0.15s ease;
+	}
+
+	button:hover,
+	.button:hover,
+	input[type='submit']:hover,
+	input[type='button']:hover {
+		filter: brightness(1.1);
+	}
+
+	button.secondary,
+	.button.secondary {
+		background-color: var(--color-secondary);
+	}
+
+	button.ghost,
+	.button.ghost {
+		background-color: var(--color-surface);
+		color: var(--color-text);
+	}
+
+	button.success,
+	.button.success {
+		background-color: var(--color-success);
+	}
+
+	button.warning,
+	.button.warning {
+		background-color: var(--color-warning);
+	}
+
+	button.error,
+	.button.error {
+		background-color: var(--color-error);
+	}
+
+	/* Forms */
+	label {
+		display: block;
+		margin-bottom: 0.25em;
+		color: var(--color-text-muted);
+	}
+
+	label[for='file'] {
+		display: block;
+		margin-bottom: 0.25em;
+		color: var(--color-text-muted);
+		text-decoration: underline;
+		cursor: pointer;
+	}
+
+	input[type='text'],
+	input[type='number'],
+	input[type='email'],
+	input[type='url'],
+	input[type='search'],
+	input[type='password'],
+	textarea,
+	select {
+		width: calc(100% - 1.5em);
+		padding: 0.5em 0.75em;
+		border: 1px solid var(--color-surface);
+		border-radius: 6px;
+		background-color: var(--color-surface);
+		color: var(--color-text);
+		font-family: inherit;
+		font-size: 1em;
+	}
+
+	input[type='file'] {
+		display: none;
+	}
+
+	input:focus,
+	textarea:focus,
+	select:focus {
+		outline: 2px solid var(--color-primary);
+	}
+
+	fieldset {
+		margin: 0 0 1em;
+		padding: 1em;
+		border: 1px solid var(--color-surface);
+		border-radius: 6px;
+	}
+
+	legend {
+		padding: 0 0.5em;
+		color: var(--color-text-muted);
+	}
+
+	/* Lists */
+	ul,
+	ol {
+		margin: 0 0 1em;
+		padding-left: 1.5em;
+	}
+
+	li {
+		margin-bottom: 0.25em;
+	}
+
+	/* Tables */
+	table {
+		width: 100%;
+		border-collapse: collapse;
+		margin: 0 0 1em;
+	}
+
+	th,
+	td {
+		padding: 0.5em 0.75em;
+		text-align: left;
+		border-bottom: 1px solid var(--color-surface);
+	}
+
+	th {
+		color: var(--color-text-muted);
+		font-weight: 600;
+	}
+
+	/* Inline code and preformatted blocks */
+	code {
+		padding: 0.15em 0.35em;
+		border-radius: 4px;
+		background-color: var(--color-surface);
+		font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+		font-size: 0.9em;
+	}
+
+	pre {
+		padding: 1em;
+		border-radius: 6px;
+		background-color: var(--color-surface);
+		overflow-x: auto;
+	}
+
+	pre code {
+		padding: 0;
+		background: none;
+	}
+
+	/* Semantic feedback blocks */
+	.success-block,
+	.warning-block,
+	.error-block {
+		padding: 0.75em 1em;
+		border-radius: 6px;
+		border-left: 4px solid;
+	}
+
+	.success-block {
+		border-color: var(--color-success);
+		background-color: color-mix(in srgb, var(--color-success) 12%, var(--color-surface));
+	}
+
+	.warning-block {
+		border-color: var(--color-warning);
+		background-color: color-mix(in srgb, var(--color-warning) 12%, var(--color-surface));
+	}
+
+	.error-block {
+		border-color: var(--color-error);
+		background-color: color-mix(in srgb, var(--color-error) 12%, var(--color-surface));
+	}
+
+	/* Color swatches for the test page */
+	.swatch {
+		display: inline-block;
+		width: 6rem;
+		height: 6rem;
+		border-radius: 6px;
+		text-align: center;
+		line-height: 6rem;
+		color: var(--color-background);
+		font-size: 0.85rem;
+	}
+}

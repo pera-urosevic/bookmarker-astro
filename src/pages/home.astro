@@ -1,0 +1,56 @@
+---
+import { getImage } from 'astro:assets'
+import HomeLauncher from '../components/HomeLauncher.tsx'
+import { listBookmarks } from '../lib/bookmarks'
+import { sortByClicks } from '../lib/sort'
+import { pickWallpaper } from '../lib/wallpaper'
+import Layout from '../layouts/Layout.astro'
+
+const bookmarks = sortByClicks(await listBookmarks())
+const wallpapers = Object.values(
+	import.meta.glob<ImageMetadata>('/src/assets/wallpapers/*.{jpg,JPG,jpeg,JPEG,png,PNG,webp,WEBP,avif,AVIF,gif,GIF}', {
+		eager: true,
+		import: 'default',
+	}),
+)
+const wallpaper = pickWallpaper(wallpapers)
+const optimizedBackground = wallpaper
+	? await getImage({ src: wallpaper, width: 2560, height: 1440, format: 'webp' })
+	: undefined
+const backgroundStyle = optimizedBackground ? `background-image: url('${optimizedBackground.src}')` : undefined
+---
+
+<Layout title="Home">
+	<div class="home">
+		<div class="background" style={backgroundStyle} aria-hidden="true"></div>
+		<HomeLauncher bookmarks={bookmarks} client:load />
+	</div>
+</Layout>
+
+<style>
+	:global(body) {
+		padding: 0;
+	}
+
+	.home {
+		position: relative;
+		min-height: 100vh;
+		min-height: 100dvh;
+		box-sizing: border-box;
+		display: flex;
+		justify-content: center;
+		align-items: flex-start;
+		padding: 18vh 1rem 2rem;
+		background-color: var(--color-background);
+	}
+
+	.background {
+		position: fixed;
+		inset: 0;
+		z-index: 0;
+		background-color: var(--color-background);
+		background-size: cover;
+		background-position: center;
+		background-repeat: no-repeat;
+	}
+</style>

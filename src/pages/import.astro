@@ -1,0 +1,157 @@
+---
+import { listBookmarks, upsertBookmarks } from '../lib/bookmarks'
+import { mergeBookmarks, parseBookmarks, type ImportResult } from '../lib/bookmarks-import'
+import Layout from '../layouts/Layout.astro'
+
+const maxFileSize = 10 * 1024 * 1024
+
+let error = ''
+let result: ImportResult | null = null
+
+if (Astro.request.method === 'POST') {
+	try {
+		const formData = await Astro.request.formData()
+		const file = formData.get('file')
+
+		if (!(file instanceof File) || file.size === 0) {
+			error = 'Please choose a non-empty bookmarks.html file.'
+		} else if (file.size > maxFileSize) {
+			error = 'The file is too large (maximum 10 MB).'
+		} else {
+			const incoming = parseBookmarks(await file.text())
+
+			if (incoming.length === 0) {
+				error = 'No bookmarks found. Make sure this is a Netscape bookmarks.html export.'
+			} else {
+				const merged = mergeBookmarks(await listBookmarks(), incoming)
+				await upsertBookmarks([...merged.imported, ...merged.updated])
+				result = merged
+			}
+		}
+	} catch (e) {
+		error = e instanceof Error ? e.message : 'Import failed.'
+	}
+}
+---
+
+<Layout title="Import Bookmarks">
+	<header>
+		<h1>Import Bookmarks</h1>
+		<nav>
+			<a href="/" class="button">
+				Back to List
+			</a>
+		</nav>
+	</header>
+
+	<main>
+		{error && (
+			<div class="error-block">
+				<p>{error}</p>
+			</div>
+		)}
+
+		{result && (
+			<div class="success-block import-summary">
+				<p>
+					<strong>Imported:</strong> {result.imported.length}
+				</p>
+
+				<p>
+					<strong>Updated:</strong>
+				</p>
+				{result.updated.length > 0 ? (
+					<ul>
+						{result.updated.map(bookmark => (
+							<li>
+								<a href={`/${bookmark.id}`}>{bookmark.title || bookmark.url}</a>
+							</li>
+						))}
+					</ul>
+				) : (
+					<p class="muted">None</p>
+				)}
+
+				<p>
+					<strong>Skipped:</strong>
+				</p>
+				{result.skipped.length > 0 ? (
+					<ul>
+						{result.skipped.map(bookmark => (
+							<li>
+								<a href={`/${bookmark.id}`}>{bookmark.title || bookmark.url}</a>
+							</li>
+						))}
+					</ul>
+				) : (
+					<p class="muted">None</p>
+				)}
+			</div>
+		)}
+
+		<form method="POST" action="/import" enctype="multipart/form-data">
+			<div class="form-group">
+				<label for="file">Click here to select file</label>
+				<input type="file" id="file" name="file" accept=".html,.htm,text/html" required />
+			</div>
+
+			<button type="submit">Import Bookmarks</button>
+		</form>
+
+		<p class="import-help">
+			Existing bookmarks are matched by URL. Categories are derived from the folder hierarchy, skipping browser
+			containers such as "Bookmarks Bar". Blank titles, notes, and categories are filled in; existing tags are
+			preserved, and everything else is left unchanged.
+		</p>
+	</main>
+</Layout>
+
+<style>
+	header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: 2rem;
+	}
+
+	form {
+		max-width: 600px;
+	}
+
+	.form-group {
+		margin-bottom: 1rem;
+	}
+
+	.success-block,
+	.error-block {
+		margin-bottom: 1rem;
+		max-width: 600px;
+	}
+
+	.success-block p,
+	.error-block p {
+		margin: 0;
+	}
+
+	.import-summary p {
+		margin: 0 0 0.5em;
+	}
+
+	.import-summary ul {
+		margin: 0 0 1em;
+	}
+
+	.import-summary li {
+		margin-bottom: 0.25em;
+	}
+
+	.muted {
+		color: var(--color-text-muted);
+	}
+
+	.import-help {
+		margin-top: 1rem;
+		color: var(--color-text-muted);
+		max-width: 600px;
+	}
+</style>

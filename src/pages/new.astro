@@ -1,0 +1,89 @@
+---
+import SuggestionButton from '../components/SuggestionButton.tsx'
+import { createBookmark } from '../lib/bookmarks'
+import { parseTags } from '../lib/tags'
+import Layout from '../layouts/Layout.astro'
+
+if (Astro.request.method === 'POST') {
+	const formData = await Astro.request.formData()
+	const url = formData.get('url')?.toString().trim() || ''
+	const title = formData.get('title')?.toString().trim() || ''
+	const notes = formData.get('notes')?.toString().trim() || ''
+	const category = formData.get('category')?.toString().trim() || ''
+	const tags = parseTags(formData.get('tags')?.toString() ?? '')
+
+	await createBookmark({ url, title, notes, category, tags })
+
+	return Astro.redirect('/')
+}
+---
+
+<Layout title="Add Bookmark">
+	<header>
+		<h1>Add Bookmark</h1>
+		<nav>
+			<a href="/" class="button">
+				Back to List
+			</a>
+		</nav>
+	</header>
+
+	<main>
+		<form method="POST" action="/new">
+			<div class="form-group">
+				<label for="url">URL *</label>
+				<input type="url" id="url" name="url" required />
+			</div>
+
+			<div class="form-group">
+				<label for="title">Title</label>
+				<input type="text" id="title" name="title" />
+			</div>
+
+			<div class="form-group">
+				<label for="category">Category</label>
+				<input type="text" id="category" name="category" />
+			</div>
+
+			<div class="form-group">
+				<label for="notes">Notes</label>
+				<textarea id="notes" name="notes" rows="4"></textarea>
+			</div>
+
+			<div class="form-group">
+				<label for="tags">Tags (comma separated)</label>
+				<input type="text" id="tags" name="tags" placeholder="..., ..., ..." />
+			</div>
+
+			<div class="form-actions">
+				<button type="submit">Create Bookmark</button>
+				<SuggestionButton client:load />
+			</div>
+		</form>
+	</main>
+</Layout>
+
+<style>
+	header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: 2rem;
+	}
+
+	.form-group {
+		margin-bottom: 1rem;
+	}
+
+	.form-actions {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+		align-items: center;
+		gap: 0.5rem;
+	}
+
+	form {
+		max-width: 32rem;
+	}
+</style>
