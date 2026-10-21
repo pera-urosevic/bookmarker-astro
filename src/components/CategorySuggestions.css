@@ -1,0 +1,35 @@
+.category-suggestions {
+	position: absolute;
+	top: 100%;
+	right: 0;
+	left: 0;
+	z-index: 20;
+	box-sizing: border-box;
+	max-height: 15rem;
+	margin: 0.25em 0 0;
+	padding: 0.25em;
+	overflow-y: auto;
+	border: 1px solid var(--color-surface);
+	border-radius: 6px;
+	background-color: var(--color-surface);
+	box-shadow: 0 8px 24px rgb(0 0 0 / 0.35);
+	font-family: var(--font-family);
+	font-size: 1em;
+	list-style: none;
+}
+
+.category-suggestions__option {
+	padding: 0.5em 0.75em;
+	overflow: hidden;
+	border-radius: 4px;
+	color: var(--color-text);
+	line-height: 1.6;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	cursor: pointer;
+}
+
+.category-suggestions__option[aria-selected='true'] {
+	background-color: var(--color-primary);
+	color: var(--color-background);
+}
